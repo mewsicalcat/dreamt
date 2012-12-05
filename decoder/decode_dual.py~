@@ -45,7 +45,7 @@ for f in french:
   stacks[0][lm.begin()] = initial_hypothesis
   num_words = len(f)
   t = 1 #iteration 
-  T=10 #total number iterations; may not necessarily converge if not high enough, or at all if too loose?  
+  T=100 #total number iterations; may not necessarily converge if not high enough, or at all if too loose?  
   
   for t in range(1,T+1):
     sys.stdout.write('t: ' + str(t) + '\n')
