@@ -37,9 +37,15 @@ french = [tuple(line.strip().split()) for line in open(opts.input).readlines()[:
 for word in set(sum(french,())):
   if (word,) not in tm:
     tm[(word,)] = [models.phrase(word, 0.0)]
-
+converged = [0]*(len(french)+1) #starts at 0!!! 
 sys.stderr.write("Decoding %s...\n" % (opts.input,))
+i_sen = 0
+print('Iters\tViolations')
+  
 for f in french:
+  i_sen += 1
+  print('SENTENCE ' + str(i_sen))
+
   u = [0 for _ in f]              #Lagrangian                                                                                                 
   hypothesis = namedtuple("hypothesis", "logprob, lm_state, predecessor, phrase, start, end, num_trans, y_i") 
   initial_hypothesis = hypothesis(0.0, lm.begin(), None, None, 0, 0, 0, [0 for _ in f]) 
@@ -91,35 +97,43 @@ for f in french:
     
     winner = min(stacks[-1].itervalues(), key=lambda h: h.logprob)
     
-    print('\nITERATION ' + str(e) + ' =============================================\n')
-    print(sum(u_temp*y_i_temp for u_temp, y_i_temp in zip(u, winner.y_i)))
-    print('\n')
+    #print('\nITERATION ' + str(e) + ' =============================================\n')
+    #print(sum(u_temp*y_i_temp for u_temp, y_i_temp in zip(u, winner.y_i)))
+    #print('\n')
     
     def extract_english(h): 
       return "" if h.predecessor is None else "%s%s " % (extract_english(h.predecessor), h.phrase.english)
     
-    print(extract_english(winner))
+    #print(extract_english(winner))
     y = winner.y_i[:]
 
     violated = 0
     for idx in range(0, len(f)):
       if y[idx] != 1:
         violated += 1
-    print('num constraints violated: ' + str(violated) + '\n')
+    #print('num constraints violated: ' + str(violated) + '\n')
     
     if all(_ == 1 for _ in y):
-      print('done')
+      converged[e] += 1 
+      print(str(e) + '\t' + str(violated)) #should be 0
+      print(extract_english(winner))
+      break #go to next sentence?? 
       #TODO: print out best sentence
     else:
-      print('\n')
-      print(y)
+      #print('\n')
+      #print(y)
 
-      print('\n')
+      #print('\n')
       #print(u)
-      print('\n')
+      #print('\n')
+      print(str(e) + '\t' + str(violated))
       u = [u_old - (float(1)/e)*(y_t-1) for u_old, y_t in zip(u, y)]
       #print(u)
+
     if opts.verbose:
       def extract_tm_logprob(h):
         return 0.0 if h.predecessor is None else h.phrase.logprob + extract_tm_logprob(h.predecessor)
-    
+for i in range(1,len(french)+1): #need to add 1 because 0-250 inclusive 
+  converged[i] = converged[i] + converged[i-1]
+print('converged:\n')
+print(converged)

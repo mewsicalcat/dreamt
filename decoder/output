@@ -1,0 +1,5 @@
+Iters	Violations
+SENTENCE 1
+> /Users/mewsicalcat/Dropbox/Machine-Translation/dreamt/decoder/decode_dual.py(112)<module>()
+-> for idx in range(0, len(f)):
+(Pdb) 
