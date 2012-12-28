@@ -48,7 +48,7 @@ optparser.add_option("-k", "--translations-per-phrase", dest="k", default=1, typ
 optparser.add_option("-s", "--stack-size", dest="s", default=1, type="int", help="Maximum stack size (default=1)")
 optparser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False,  help="Verbose mode (default=off)")
 optparser.add_option("-e", "--number-iterations", dest="num_iter", default=10, type="int", help="number of iterations (default=10)")
-optparser.add_option("-d", "--minimum-improvement", dest="d", default=.000002, type="int", help="if difference of dual less than this, dual value has stopped improving. start tightening (default=.002)")
+optparser.add_option("-d", "--minimum-improvement", dest="d", default=.002, type="int", help="if difference of dual less than this, dual value has stopped improving. start tightening (default=.002)")
 #add G, K (number of constraints to add)
 
 opts = optparser.parse_args()[0]
@@ -170,7 +170,7 @@ def optimize(f,C,u):
     iter +=  1
 
   count = [0]*n
-  K = 10 #change to 10 later;  
+  K = 10  
   for i in range(1, K):     
     #end_new - start_new <= num_words - num_words_translated
     for i, stack in enumerate(stacks[:-1]):
