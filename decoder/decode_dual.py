@@ -170,7 +170,7 @@ def optimize(f,C,u):
     iter +=  1
 
   count = [0]*n
-  K = 7 #change to 10 later;  
+  K = 10 #change to 10 later;  
   for i in range(1, K):     
     #end_new - start_new <= num_words - num_words_translated
     for i, stack in enumerate(stacks[:-1]):
